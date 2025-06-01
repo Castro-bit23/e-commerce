@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -9,9 +9,23 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: nextecommerce
     ports:
-      - '5434:5432'
+      - "5434:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://user:password@postgres:5432/nextecommerce"
+      NODE_ENV: production
+      PORT: 3001
+      # add other env variables like JWT_SECRET, ARCJET_KEY, etc here or use a .env file
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    command: npm run start # or whatever starts your server
 
 volumes:
   postgres-data:
